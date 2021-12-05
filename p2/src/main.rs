@@ -36,7 +36,7 @@ fn parse_commands() -> Commands {
     commands
 }
 
-fn pilot_submarine_1(commands: Commands) -> i32 {
+fn pilot_submarine_1(commands: &Commands) -> i32 {
     let mut state = (0, 0); // x, y position starting from the top left
     for command in commands {
         match command {
@@ -51,8 +51,26 @@ fn pilot_submarine_1(commands: Commands) -> i32 {
     state.0 * state.1
 }
 
+fn pilot_submarine_2(commands: &Commands) -> i32 {
+    let mut state = (0, 0, 0); // x, y, aim
+    for command in commands {
+        match command {
+            Command::Forward(how_much) => {
+                state.0 += how_much;
+                state.1 += state.2 * how_much;
+            }
+            Command::Down(how_much) => state.2 += how_much,
+            Command::Up(how_much) => state.2 -= how_much,
+        }
+    }
+
+    state.0 * state.1
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let commands = parse_commands();
-    println!("Result: {} ", pilot_submarine_1(commands));
+    println!("Result: {} ", pilot_submarine_1(&commands));
+    println!("Result: {} ", pilot_submarine_2(&commands));
+
     Ok(())
 }
